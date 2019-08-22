@@ -1,0 +1,50 @@
+<b:beans xmlns="http://www.springframework.org/schema/security"
+         xmlns:b="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    
+
+    
+    
+    <http auto-config="true">
+        <intercept-url pattern="/login.do" access="permitAll" />
+        <intercept-url pattern="/**" access="hasAnyAuthority('UŻYTKOWNIK')" />         
+  
+        <form-login 
+            login-page="/login.do" 
+            login-processing-url="/j_spring_security_check"
+            default-target-url="/start.do" 
+            authentication-failure-url="/error.do" 
+            username-parameter="username"
+            password-parameter="password"
+             />        
+
+    </http>
+ 
+     
+  
+                  
+    <b:bean id="dataSource"
+            class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <b:property name="driverClassName" value="org.postgresql.Driver"/>
+        <b:property name="url" value="jdbc:postgresql://localhost/postgres"/>
+        <b:property name="username" value="postgres"/>
+        <b:property name="password" value="postgres"/>
+    </b:bean>
+            
+              
+    
+    <authentication-manager>
+        <authentication-provider>                    
+            <jdbc-user-service data-source-ref="dataSource"
+                               users-by-username-query=
+		    "select login,'test',1 from uzytkownicy where login=?"
+                               authorities-by-username-query=
+		    "select login,uprawnienie from uzytkownicy where login=?"/>          
+        </authentication-provider>    
+            
+    </authentication-manager>
+    
+</b:beans>
